@@ -27,10 +27,10 @@ npm install express cors dotenv nodemon
 npm i pg
 ```
 
-const pool = new Pool({
-host: "localhost",
-user: "postgres",
-port: 5432,
-password: process.env.DB_PASSWORD,
-database: "ecommerce",
-});
+- const pool = new Pool({
+- host: "localhost",
+- user: "postgres",
+- port: 5432,
+- password: process.env.DB_PASSWORD,
+- database: "ecommerce",
+- });
