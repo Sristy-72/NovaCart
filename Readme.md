@@ -17,8 +17,8 @@ npx create-next-app@latest .
 
 ```bash
 npm init -y
-npm install express cors dotenv
-npm install -D typescript tsx @types/node @types/express @types/cors
-npx tsc --init
+npm install express cors dotenv nodemon
+
+
 
 ```
