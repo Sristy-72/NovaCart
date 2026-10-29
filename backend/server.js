@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
+import imageRoutes from "./routes/imageRoutes.js";
 
 dotenv.config();
 
@@ -28,6 +29,8 @@ app.get("/", async (req, res) => {
   const result = await pool.query("SELECT current_database()");
   return res.send(`${result.rows[0].current_database}`);
 });
+
+app.use("/api/upload", imageRoutes);
 
 //server running
 app.listen(PORT, () => {
