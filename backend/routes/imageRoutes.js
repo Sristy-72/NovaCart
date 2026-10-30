@@ -1,14 +1,14 @@
 import express from "express";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import {
+  S3Client,
+  PutObjectCommand,
+  HeadObjectCommand,
+} from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
 
 const s3Client = new S3Client({
-  region: "ap-south-1",
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
+  region: process.env.AWS_REGION,
 });
 
 const Router = express.Router();
@@ -30,7 +30,7 @@ Router.post("/upload", async (req, res) => {
     }
 
     // generating unique imageName
-    const imageName = `images/${fileName}${uuidv4()}`;
+    const imageName = `images/${uuidv4()}${fileName}`;
 
     const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
@@ -46,6 +46,32 @@ Router.post("/upload", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+Router.post("/verify-upload", async (req, res) => {
+  try {
+    const { imageName } = req.body;
+    const command = new HeadObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: imageName,
+    });
+
+    const result = await s3Client.send(command);
+
+    if (!result.ContentLength || result.ContentLength === 0) {
+      return res.status(400).json({
+        message: "uploaded image is empty",
+      });
+    }
+    return res.status(200).json({
+      message: " image uplaoded successfully ",
+      size: result.ContentLength,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: error.message,
+    });
   }
 });
 
