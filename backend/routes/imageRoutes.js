@@ -1,14 +1,7 @@
 import express from "express";
-
-import multer from "multer";
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { v4 as uuidv4 } from "uuid";
-import path from "node:path";
 
 const s3Client = new S3Client({
   region: "ap-south-1",
@@ -19,63 +12,40 @@ const s3Client = new S3Client({
 });
 
 const Router = express.Router();
-const storage = multer.memoryStorage();
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
 
-Router.post("/upload", upload.single("image"), async (req, res) => {
+Router.post("/upload", async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).send("Please select an image to upload");
+    const { fileName, contentType, fileSize } = req.body;
+
+    // Validate file size (5 MB)
+    if (fileSize > 5 * 1024 * 1024) {
+      return res.status(400).json({ message: "File too large" });
     }
 
-    // Generate unique key/filename
-    const fileExtension = path.extname(req.file.originalname);
-    const imageName = `images/${uuidv4()}${fileExtension}`;
+    //if image is not uploaded by user ---> if image will be not uploaded then backend will not get image metadata so it will give this error
+    if (!fileName || !fileSize || !contentType) {
+      return res.status(400).send({
+        message: " upload image or missing image metadata ",
+      });
+    }
 
-    /*const uploadParams = {
+    // generating unique imageName
+    const imageName = `images/${fileName}${uuidv4()}`;
+
+    const command = new PutObjectCommand({
       Bucket: process.env.AWS_BUCKET_NAME,
-      Key: uniqueKey,
-      Body: req.file.buffer,
-      ContentType: req.file.mimetype,
-    };
-    const command = new PutObjectCommand(uploadParams);
-    await s3Client.send(command);
+      Key: imageName,
+      ContentType: contentType,
+    });
 
-    */
-
-    await s3Client.send(
-      new PutObjectCommand({
-        Bucket: process.env.AWS_BUCKET_NAME,
-        Key: imageName,
-        Body: req.file.buffer,
-        ContentType: req.file.mimetype,
-      }),
-    );
-
-    res.status(201).json({
-      message: "Image uploaded successfully",
+    const url = await getSignedUrl(s3Client, command);
+    return res.status(200).json({
+      message: "presigned url generated",
+      uploadUrl: url,
       imageName,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
-});
-
-Router.get("/:imageName", async (req, res) => {
-  try {
-    const command = new GetObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: `images/${req.params.imageName}`,
-    });
-    const imageUrl = await getSignedUrl(s3Client, command, {
-      expiresIn: 3600,
-    });
-    res.status(200).json({ imageUrl });
-  } catch (error) {
-    res.status(500).json({ errr: error.message });
   }
 });
 
