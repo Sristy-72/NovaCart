@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import pool from "./config/db.js";
 import imageRoutes from "./routes/imageRoutes.js";
+import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config();
 
@@ -31,6 +32,8 @@ app.get("/", async (req, res) => {
 });
 
 app.use("/api/upload", imageRoutes);
+
+app.use("/api/product", productRoutes);
 
 //server running
 app.listen(PORT, () => {

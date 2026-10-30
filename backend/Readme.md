@@ -48,3 +48,8 @@ if (!uploadResponse.ok) {
 ```
 
 , then asks the backend to verify it using HeadObjectCommand.
+
+## Routes
+
+- api/upload/upload ---> for posting the image metadata to the backend
+- api/upload/verify-upload ---> for verifying whether the uploaded image is not empty

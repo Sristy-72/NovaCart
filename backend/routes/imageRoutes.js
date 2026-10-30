@@ -22,7 +22,7 @@ Router.post("/upload", async (req, res) => {
       return res.status(400).json({ message: "File too large" });
     }
 
-    //if image is not uploaded by user ---> if image will be not uploaded then backend will not get image metadata so it will give this error
+    // if image will be not uploaded then backend will not get image metadata so it will give this error
     if (!fileName || !fileSize || !contentType) {
       return res.status(400).send({
         message: " upload image or missing image metadata ",
@@ -46,32 +46,6 @@ Router.post("/upload", async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
-  }
-});
-
-Router.post("/verify-upload", async (req, res) => {
-  try {
-    const { imageName } = req.body;
-    const command = new HeadObjectCommand({
-      Bucket: process.env.AWS_BUCKET_NAME,
-      Key: imageName,
-    });
-
-    const result = await s3Client.send(command);
-
-    if (!result.ContentLength || result.ContentLength === 0) {
-      return res.status(400).json({
-        message: "uploaded image is empty",
-      });
-    }
-    return res.status(200).json({
-      message: " image uplaoded successfully ",
-      size: result.ContentLength,
-    });
-  } catch (error) {
-    return res.status(400).json({
-      error: error.message,
-    });
   }
 });
 

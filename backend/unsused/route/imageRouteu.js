@@ -68,4 +68,31 @@ Router.get("/:imageName", async (req, res) => {
   }
 });
 
+// this is unused in imageRoutes because verification for the image metadata will be already done in productRoutes during uploading the image
+Router.post("/verify-upload", async (req, res) => {
+  try {
+    const { imageName } = req.body;
+    const command = new HeadObjectCommand({
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: imageName,
+    });
+
+    const result = await s3Client.send(command);
+
+    if (!result.ContentLength || result.ContentLength === 0) {
+      return res.status(400).json({
+        message: "uploaded image is empty",
+      });
+    }
+    return res.status(200).json({
+      message: " image uplaoded successfully ",
+      size: result.ContentLength,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      error: error.message,
+    });
+  }
+});
+
 export default Router;
