@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import pool from "./config/db.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import registerRoutes from "./routes/registerRoutes.js";
 
 dotenv.config();
 
@@ -31,9 +32,11 @@ app.get("/", async (req, res) => {
   return res.send(`${result.rows[0].current_database}`);
 });
 
+app.use("/api/product", productRoutes);
 app.use("/api/upload", imageRoutes);
 
-app.use("/api/product", productRoutes);
+// authentication
+app.use("/api/register", registerRoutes);
 
 //server running
 app.listen(PORT, () => {
