@@ -4,7 +4,7 @@ import dotenv from "dotenv";
 import pool from "./config/db.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
-import registerRoutes from "./routes/registerRoutes.js";
+import { registerController } from "./controllers/registerController.js";
 
 dotenv.config();
 
@@ -36,7 +36,7 @@ app.use("/api/product", productRoutes);
 app.use("/api/upload", imageRoutes);
 
 // authentication
-app.use("/api/register", registerRoutes);
+app.use("/api/register", registerController);
 
 //server running
 app.listen(PORT, () => {
