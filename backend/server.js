@@ -6,6 +6,8 @@ import imageRoutes from "./routes/imageRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
+import auth from "./middleware/auth.js";
+import profileUpdateRoute from "./routes/profileUpdateRoute.js";
 
 dotenv.config();
 
@@ -39,6 +41,10 @@ app.use("/api/upload", imageRoutes);
 
 // authentication
 app.use("/api/auth", authRoutes);
+
+// updating profile
+
+app.use("/api/editProfile", profileUpdateRoute);
 
 //server running
 app.listen(PORT, () => {
