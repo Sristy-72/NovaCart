@@ -5,6 +5,7 @@ import pool from "./config/db.js";
 import imageRoutes from "./routes/imageRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ const app = express();
 //middleware
 app.use(express.json());
 app.use(cors());
+app.use(cookieParser());
 
 const PORT = process.env.PORT;
 console.log(PORT);

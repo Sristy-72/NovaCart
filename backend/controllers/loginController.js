@@ -1,7 +1,8 @@
 import pool from "../config/db.js";
 import bcrypt from "bcrypt";
+import generateToken from "../config/generateToken.js";
 export const loginController = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, id } = req.body;
 
   try {
     const result = await pool.query(
@@ -30,6 +31,15 @@ export const loginController = async (req, res) => {
       });
     }
 
+    const token = generateToken(user.id);
+
+    // send token as cookie
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+    });
     return res.status(200).json({
       message: "Login successful",
       user: {
@@ -43,4 +53,11 @@ export const loginController = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+export const logoutController = (req, res) => {
+  res.clearCookie("token");
+  res.json({
+    message: "Logged out successfully",
+  });
 };
