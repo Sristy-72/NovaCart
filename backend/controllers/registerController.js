@@ -1,5 +1,3 @@
-import express from "express";
-const Router = express.Router();
 import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 

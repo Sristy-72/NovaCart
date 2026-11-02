@@ -1,3 +1,4 @@
+import forgotPassword from "../controllers/forgotPassword.js";
 import {
   loginController,
   logoutController,
@@ -9,5 +10,6 @@ const Router = express.Router();
 Router.post("/register", registerController);
 Router.post("/login", loginController);
 Router.post("/logout", logoutController);
+Router.post("/forgotPassword", forgotPassword);
 
 export default Router;
