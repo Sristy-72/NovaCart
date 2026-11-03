@@ -4,10 +4,11 @@ import {
   logoutController,
 } from "../controllers/loginController.js";
 import { registerController } from "../controllers/registerController.js";
+import resetPassword from "../controllers/resetPassword.js";
 
 import express from "express";
-import resetPassword from "../controllers/resetPassword.js";
 const Router = express.Router();
+
 Router.post("/register", registerController);
 Router.post("/login", loginController);
 Router.post("/logout", logoutController);
