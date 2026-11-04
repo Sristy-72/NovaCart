@@ -6,7 +6,6 @@ import imageRoutes from "./routes/imageRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
-import auth from "./middleware/auth.js";
 import profileUpdateRoute from "./routes/profileUpdateRoute.js";
 import cartRoutes from "./routes/cartRoutes.js";
 
@@ -37,6 +36,7 @@ app.get("/", async (req, res) => {
   return res.send(`${result.rows[0].current_database}`);
 });
 
+// product routes include add, delete and update product
 app.use("/api/product", productRoutes);
 app.use("/api/upload", imageRoutes);
 
@@ -47,6 +47,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/editProfile", profileUpdateRoute);
 
+// cart route include add , remove , cartCheckout , view cart
 app.use("/api/cart", cartRoutes);
 
 //server running

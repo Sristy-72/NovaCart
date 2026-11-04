@@ -2,12 +2,12 @@ import pool from "../config/db.js";
 import bcrypt from "bcrypt";
 import generateToken from "../config/generateToken.js";
 export const loginController = async (req, res) => {
-  const { email, password, id } = req.body;
+  const { email, password } = req.body;
 
   try {
     const result = await pool.query(
       `
-    select id , name ,email , hashedpass 
+    select id , name ,email , hashedpass  , role
     from users
     where email = $1`,
       [email],
@@ -31,7 +31,7 @@ export const loginController = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user);
 
     // send token as cookie
 
@@ -46,6 +46,7 @@ export const loginController = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
