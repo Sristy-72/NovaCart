@@ -8,7 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
 import auth from "./middleware/auth.js";
 import profileUpdateRoute from "./routes/profileUpdateRoute.js";
-import addToCartRoute from "./controllers/addToCartRoute.js";
+import cartRoutes from "./routes/cartRoutes.js";
 
 dotenv.config();
 
@@ -47,7 +47,7 @@ app.use("/api/auth", authRoutes);
 
 app.use("/api/editProfile", profileUpdateRoute);
 
-app.use("/api", addToCartRoute);
+app.use("/api/cart", cartRoutes);
 
 //server running
 app.listen(PORT, () => {
