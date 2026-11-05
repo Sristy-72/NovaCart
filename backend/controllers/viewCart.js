@@ -22,8 +22,19 @@ const viewCart = async (req, res) => {
         `,
       [user_id],
     );
+    const totalResult = await pool.query(
+      `
+       SELECT COALESCE(SUM(products.price * cart_items.quantity), 0) AS cart_total
+       FROM cart_items 
+       JOIN products  ON cart_items.product_id = products.id
+       WHERE cart_items.user_id = $1
+       `,
+      [user_id],
+    );
+
+    const cartTotal = totalResult.rows[0].cart_total;
     if (result.rows.length == 0) {
-      return res.status(404).json({
+      return res.status(200).json({
         message: "No items in the cart",
       });
     }
@@ -31,6 +42,7 @@ const viewCart = async (req, res) => {
     return res.status(200).json({
       message: " items in your cart",
       cart: result.rows,
+      cart_total: cartTotal,
     });
   } catch (error) {
     console.error("view cart error:", error);
