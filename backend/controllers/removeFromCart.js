@@ -2,15 +2,15 @@ import pool from "../config/db.js";
 
 const removeFromCart = async (req, res) => {
   const user_id = req.user.id;
-  const { id } = req.body;
+
   try {
     const result = await pool.query(
       `
             delete from cart_items 
-            where id = $1 and user_id = $2
+            where user_id = $1
             returning *
             `,
-      [id, user_id],
+      [user_id],
     );
 
     if (result.rows.length === 0) {

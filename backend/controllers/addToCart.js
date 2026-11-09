@@ -5,16 +5,16 @@ const addToCart = async (req, res) => {
   const { product_id, quantity } = req.body;
 
   try {
-    // Validate input
+    // 1. Validate input
     if (!product_id || !Number.isInteger(quantity) || quantity <= 0) {
       return res.status(400).json({
         message: "Valid product ID and quantity are required",
       });
     }
 
-    // Check whether product exists
+    // 2. Check product existence
     const productExists = await pool.query(
-      `SELECT id FROM products WHERE id = $1`,
+      `SELECT id, stock FROM products WHERE id = $1`,
       [product_id],
     );
 
@@ -24,7 +24,26 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // Insert or update cart item
+    const product = productExists.rows[0];
+
+    // 3. Check existing cart quantity
+    const existingCart = await pool.query(
+      `SELECT quantity FROM cart_items
+       WHERE user_id = $1 AND product_id = $2`,
+      [user_id, product_id],
+    );
+
+    const existingQuantity = existingCart.rows[0]?.quantity || 0;
+    const updatedQuantity = existingQuantity + quantity;
+
+    // 4. Validate stock
+    if (updatedQuantity > product.stock) {
+      return res.status(400).json({
+        message: `Only ${product.stock} items are currently available`,
+      });
+    }
+
+    // 5. Insert or update cart item
     const result = await pool.query(
       `INSERT INTO cart_items (product_id, user_id, quantity)
        VALUES ($1, $2, $3)

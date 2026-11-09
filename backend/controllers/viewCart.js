@@ -3,6 +3,7 @@ import pool from "../config/db.js";
 // this is for viewing the cartitems of particular user
 const viewCart = async (req, res) => {
   const user_id = req.user.id;
+
   try {
     const result = await pool.query(
       `
@@ -10,11 +11,9 @@ const viewCart = async (req, res) => {
         cart_items.product_id,
         cart_items.user_id,
         cart_items.quantity,
-        products.stock,
         products.name,
         products.price,
-        products.descr,
-        products.cat_id
+        products.descr
         from cart_items 
         join products 
         on cart_items.product_id= products.id
