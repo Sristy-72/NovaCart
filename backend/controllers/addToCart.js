@@ -19,7 +19,8 @@ const addToCart = async (req, res) => {
 
     // 2. Check product existence
     const productExists = await client.query(
-      `SELECT id, stock FROM products WHERE id = $1`,
+      `SELECT id, stock FROM products WHERE id = $1 
+      for update`,
       [product_id],
     );
 
@@ -44,11 +45,12 @@ const addToCart = async (req, res) => {
     const updatedQuantity = existingQuantity + quantity;
 
     // 4. Validate stock
-    if (updatedQuantity > product.stock) {
+
+    if (updatedQuantity > product.stock || updatedQuantity > 10) {
       await client.query("rollback");
       transactionStarted = false;
       return res.status(400).json({
-        message: `Only ${product.stock} items are currently available`,
+        message: `Only ${product.stock} items are currently available or only 10 items per user allowed`,
       });
     }
 

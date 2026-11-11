@@ -13,7 +13,9 @@ const viewCart = async (req, res) => {
         cart_items.quantity,
         products.name,
         products.price,
-        products.descr
+        products.descr,
+        products.stock,
+        products.stock >= cart_items.quantity AS is_available
         from cart_items 
         join products 
         on cart_items.product_id= products.id
