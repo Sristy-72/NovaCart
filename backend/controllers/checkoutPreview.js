@@ -17,12 +17,7 @@ const checkoutPreview = async (req, res) => {
     const productIds = new Set();
 
     for (const item of items) {
-      if (
-        !Number.isInteger(item.product_id) ||
-        item.product_id <= 0 ||
-        !Number.isInteger(item.quantity) ||
-        item.quantity <= 0
-      ) {
+      if (item.product_id <= 0 || item.quantity <= 0) {
         return res.status(400).json({
           message: " Invalid product ID or quantity",
         });
@@ -38,7 +33,7 @@ const checkoutPreview = async (req, res) => {
 
     // Fetch selected products from the user's cart
 
-    const ids = items.map((item) => item.product_id);
+    const ids = items.map((item) => item.product_id); // [1, 2, 3] -- array of product_id
 
     const result = await pool.query(
       `
@@ -47,7 +42,6 @@ const checkoutPreview = async (req, res) => {
         ci.quantity AS cart_quantity,
         p.name,
         p.price,
-        p.stock,
         p.descr
       FROM cart_items ci
       JOIN products p
@@ -72,6 +66,11 @@ const checkoutPreview = async (req, res) => {
         (p) => String(p.product_id) === String(item.product_id),
       );
 
+      if (product.stock === 0) {
+        return res.status(400).json({
+          message: `${product.name} is out of stock`,
+        });
+      }
       if (item.quantity > product.cart_quantity) {
         return res.status(400).json({
           message: `Selected quantity exceeds cart quantity for ${product.name}`,
@@ -91,7 +90,6 @@ const checkoutPreview = async (req, res) => {
         name: product.name,
         price: product.price,
         quantity: item.quantity,
-        stock: product.stock,
         subtotal,
       });
     }
@@ -101,8 +99,13 @@ const checkoutPreview = async (req, res) => {
       (total, item) => total + item.subtotal,
       0,
     );
+    let shipping;
+    if (subtotal > 500) {
+      shipping = 0;
+    } else {
+      shipping = 40;
+    }
 
-    const shipping = 40;
     const total = subtotal + shipping;
 
     // 7. Return checkout summary

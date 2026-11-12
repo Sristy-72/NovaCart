@@ -54,7 +54,7 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // 5. Insert or update cart item (upsert)
+    // 5. Insert or update cart item (upsert) if product already exist in the cart then just update the quantity and if it does not exist then add it
     const result = await client.query(
       `INSERT INTO cart_items (product_id, user_id, quantity)
        VALUES ($1, $2, $3)

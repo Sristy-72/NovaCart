@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import pool from "../config/db.js";
-import sendEmail from "../utils/sendEmail.js";
+import sendEmail from "../services/sendEmail.js";
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
 

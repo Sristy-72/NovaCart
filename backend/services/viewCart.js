@@ -15,7 +15,11 @@ const viewCart = async (req, res) => {
         products.price,
         products.descr,
         products.stock,
-        products.stock >= cart_items.quantity AS is_available
+       CASE
+        WHEN products.stock = 0 THEN 'out_of_stock'
+        WHEN products.stock < cart_items.quantity THEN 'insufficient_stock'
+        ELSE 'available'
+       END AS availability
         from cart_items 
         join products 
         on cart_items.product_id= products.id
