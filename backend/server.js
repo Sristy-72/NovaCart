@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import cookieParser from "cookie-parser";
 import profileUpdateRoute from "./routes/profileUpdateRoute.js";
 import cartRoutes from "./routes/cartRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
 
 dotenv.config();
 
@@ -49,6 +50,10 @@ app.use("/api/editProfile", profileUpdateRoute);
 
 // cart route include add , remove , cartCheckout , view cart
 app.use("/api/cart", cartRoutes);
+
+// address route --> add , remove , edit
+
+app.use("/api/address", addressRoutes);
 
 //server running
 app.listen(PORT, () => {

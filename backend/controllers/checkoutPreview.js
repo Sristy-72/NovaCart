@@ -1,5 +1,4 @@
 //This endpoint only prepares the checkout summary. It will not create the final order yet.
-// address and payment options
 
 import pool from "../config/db.js";
 
@@ -7,6 +6,7 @@ const checkoutPreview = async (req, res) => {
   const user_id = req.user.id;
   const { items } = req.body;
   try {
+    // selected items from frontend
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
         message: " Atleast one product is reuired to continue",
@@ -42,7 +42,8 @@ const checkoutPreview = async (req, res) => {
         ci.quantity AS cart_quantity,
         p.name,
         p.price,
-        p.descr
+        p.descr,
+        p.stock
       FROM cart_items ci
       JOIN products p
         ON ci.product_id = p.id
