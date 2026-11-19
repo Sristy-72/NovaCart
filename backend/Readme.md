@@ -53,3 +53,15 @@ if (!uploadResponse.ok) {
 
 - api/upload/upload ---> for posting the image metadata to the backend
 - api/upload/verify-upload ---> for verifying whether the uploaded image is not empty
+
+## checoutPreview
+
+1.  first check whether user is sending an array of items or not
+2.  now run a loop to check whether all the products_id and quanity is integer or not
+3.  store the product id in an array
+4.  fetch those items with product id from database where product_id = stored array of ids
+5.  now check all the items selected is equal to the result.length
+6.  now validate the stock and quantity from the database whether the stock is not empty or requested quantity does not exceeds the stock availabity or quantity is not more than the requested quantity
+7.  push the selected items into checked items after validation
+8.  once validation is done calculate the price of all the items and then add shipping price
+9.  return all the items selected along with total price and shipping price

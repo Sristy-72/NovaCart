@@ -17,7 +17,12 @@ const checkoutPreview = async (req, res) => {
     const productIds = new Set();
 
     for (const item of items) {
-      if (item.product_id <= 0 || item.quantity <= 0) {
+      if (
+        !Number.isInteger(item.product_id) ||
+        item.product_id <= 0 ||
+        !Number.isInteger(item.quantity) ||
+        item.quantity <= 0
+      ) {
         return res.status(400).json({
           message: " Invalid product ID or quantity",
         });
