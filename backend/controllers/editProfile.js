@@ -1,7 +1,7 @@
 import pool from "../config/db.js";
 
 const editProfile = async (req, res) => {
-  const { name, phone, address, gender } = req.body;
+  const { name, phone, gender } = req.body;
   try {
     const result = await pool.query(
       `
@@ -9,8 +9,8 @@ const editProfile = async (req, res) => {
     set name = $1 , phone = $2, 
     address = $3, gender = $4
     where id = $5
-    returning name , phone , address, gender`,
-      [name, phone, address, gender, req.user.id],
+    returning name , phone ,  gender`,
+      [name, phone, gender, req.user.id],
     );
     if (result.rows.length === 0) {
       return res.status(404).json({

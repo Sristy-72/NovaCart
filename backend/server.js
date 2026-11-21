@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import profileUpdateRoute from "./routes/profileUpdateRoute.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
 
@@ -54,6 +55,10 @@ app.use("/api/cart", cartRoutes);
 // address route --> add , remove , edit
 
 app.use("/api/address", addressRoutes);
+
+// order Route - place order , edit order , aprove order
+
+app.use("/api/order", orderRoutes);
 
 //server running
 app.listen(PORT, () => {
